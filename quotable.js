@@ -3,16 +3,45 @@
         body = document.getElementsByTagName( 'body' )[0],
         tweetDiv = null,
         text = '';
+	
+	/**
+	 * Twitter's URL shortener will always shorten links to 22 characters. We need to truncate
+	 * text automatically to make sure the tweet as a whole is less than 140 characters. But we
+	 * also want to add quotes and ellipsis.
+	 */
+	function shortenText() {
+		text = text.toString();
+		text = text.trim();
+		text = '"' + text;
+		if ( text.length > 116 )
+			text = text.substring( 0, 115 ) + '…';
+		
+		text = text + '"';
+	}
+	
+	/**
+	 * Remove the Twitter button and reset things.
+	 */
+	function remove() {
+		tweetDiv.parentNode.removeChild( tweetDiv );
+		tweetDiv = null;
+		text = '';
+	}
     
+	/**
+	 * Create the Twitter button node.
+	 *
+	 * @param {number} x
+	 * @param {number} y
+	 */
     function tweeter( x, y ) {              
-        if ( null !== tweetDiv ) {
-            tweetDiv.parentNode.removeChild( tweetDiv );
-			tweetDiv = null;
-        }
-        
-        if ( 0 === text.toString().length ) {
+        if ( null !== tweetDiv )
+			remove();
+		       
+        if ( 0 === text.toString().length )
             return;
-        }
+		
+		shortenText();
         
         tweetDiv = document.createElement( 'div' );
         tweetDiv.className = 'dyn-tweet-this';
@@ -34,20 +63,34 @@
         tweetDiv.style.left = x + 'px';
         
         body.appendChild( tweetDiv );
-		
-		// Scan for unloaded widgets.
-		//window.twttr.widgets.load();
     }
+	
+	/**
+	 * Clear any active selection so we don't double-print the Twitter button.
+	 */
+	function clear() {
+		if ( window.getSelection ) {
+			window.getSelection().empty() || window.getSelection().removeAllRanges();
+		} else if ( document.selection ) {
+			document.selection.empty();
+		}
+	}
     
+	/**
+	 * Intercept any mouseup events and check to see if we have a selected range of text.
+	 */
     function get( e ) {
-		console.log( e );
+		document.onmousedown = clear;
+		
+		if ( ! document.all )
+			document.captureEvents( Event.MOUSEDOWN );
+		
         text = document.all ? document.selection.createRange().text : document.getSelection();
         tweeter( e.pageX, e.pageY );
     }
     
     document.onmouseup = get;
     
-    if ( ! document.all ) {
+    if ( ! document.all )
         document.captureEvents( Event.MOUSEUP );
-    }
 } )( window );
