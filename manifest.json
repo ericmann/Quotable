@@ -2,8 +2,9 @@
 	"name": "Quotable",
 	"description": "Automatically tweet quotes from articles by highlighting them with the cursor.",
 	"version": "0.1.0",
-	"mainfest_version": 2,
-	"content_scripts": [
+	"manifest_version": 2,
+	"content_scripts": [ {
+		"matches": [ "http://*/*", "https://*/*" ],
 		"js": ["quotable.js"]
-	]
+	} ]
 }
