@@ -45,6 +45,7 @@
         
         tweetDiv = document.createElement( 'div' );
         tweetDiv.className = 'dyn-tweet-this';
+		tweetDiv.style.zIndex = 10001;
         var anchor = document.createElement( 'a' );
         anchor.className = 'twitter-share-button';
         anchor.href = 'https://twitter.com/share?url=' + encodeURI( window.location ) + '&text=' + encodeURI( text );
